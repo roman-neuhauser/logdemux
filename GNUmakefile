@@ -1,7 +1,7 @@
 # vim: sw=2 sts=2 ts=8
 
 CPPFLAGS=-I/usr/local/include
-CXXFLAGS=-std=c++0x
+CXXFLAGS=-std=gnu++0x
 LD=$(CXX)
 LDFLAGS=-L/usr/local/lib
 LIBS=-lboost_date_time
