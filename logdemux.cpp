@@ -3,70 +3,145 @@
 // vim: sw=2 sts=2 ts=2 fdm=marker cms=\ //\ %s
 
 #include <iostream>
+#include <istream>
 #include <ostream>
 #include <fstream>
 #include <string>
+#include <vector>
 
+#include "boost/foreach.hpp"
 #include "boost/date_time/gregorian/gregorian.hpp"
-#include "boost/format.hpp"
+#include "boost/regex.hpp"
+#include "boost/shared_ptr.hpp"
+
+#include "iniphile/input.hpp"
+#include "iniphile/ast.hpp"
+#include "iniphile/output.hpp"
+
+#define foreach BOOST_FOREACH
 
 using std::cin;
 using std::cout;
+using std::cerr;
 using std::endl;
 using std::ios;
 using std::getline;
-using std::ostream;
+using std::ifstream;
 using std::ofstream;
 using std::string;
+using std::vector;
 
 using namespace boost::gregorian;
-using boost::format;
-using boost::io::all_error_bits;
-using boost::io::too_few_args_bit;
-using boost::io::too_many_args_bit;
+
+using boost::regex;
+using boost::shared_ptr;
 
 namespace
 {
 
-void
-open(ofstream &log, format &fmt, date today)
+class rule
 {
-  auto fname = str(fmt % to_iso_extended_string(today)).c_str();
-  log.open(fname, ios::app | ios::binary);
-}
+public:
+  rule(string const &prefix, date const &now, string const &match, string const &sink, bool final) // {{{
+  : sink(sink)
+  , prefix(prefix)
+  , final(final)
+  , pat(regex(match, regex::perl))
+  , os(expand(sink, now).c_str(), ios::app | ios::binary)
+  , opened_on(now)
+  {
+  } // }}}
+  bool
+  handle(date const &now, string const &line) // {{{
+  {
+    if (!regex_search(line, pat))
+      return false;
+    if (opened_on < now)
+      reopen(os, now);
+    os << line << endl;
+    return final;
+  } // }}}
+private:
+  string const &prefix;
+  date const &opened_on;
+  string const &sink;
+  bool final;
+  regex pat;
+  ofstream os;
+
+  void
+  reopen(ofstream &os, date const &now) // {{{
+  {
+    os.close();
+    os.open(expand(sink, now).c_str(), ios::app | ios::binary);
+  } // }}}
+  string
+  expand(string fmt, date const &d) // {{{
+  {
+    fmt = regex_replace(fmt, regex("%D"), to_iso_extended_string(d));
+    fmt = regex_replace(fmt, regex("%P"), prefix);
+    return fmt;
+  } // }}}
+};
+
+template<class Ini = iniphile::ast::node>
+class ruleset
+{
+public:
+  ruleset(Ini const &ini, string const &prefix, date const &now)
+  : ini(ini)
+  , prefix(prefix)
+  {
+    foreach (auto &rname, iniphile::get(ini, "rules.order", vector<string>()))
+      create_rule(rname, now);
+  }
+  void
+  handle(date const &now, string const &line) // {{{
+  {
+    foreach (shared_ptr<rule> &r, rules)
+      if (r->handle(now, line))
+        break;
+  } // }}}
+private:
+  Ini const &ini;
+  string const &prefix;
+  vector<shared_ptr<rule>> rules;
+
+  void
+  create_rule(string const &rname, date const &now) // {{{
+  {
+    auto match = iniphile::get(ini, rname + ".match", string(""));
+    auto sink = iniphile::get(ini, rname + ".sink", string(""));
+    auto final = iniphile::get(ini, rname + ".final", false);
+    rules.push_back(shared_ptr<rule>(new rule(prefix, now, match, sink, final)));
+  } // }}}
+};
 
 }
 
 int
 main(int argc, char **argv)
 {
-  string line;
-  ofstream log_main;
-  ofstream log_fcgid;
-  auto fmt_main = format(argc > 1 ? argv[1] : "error");
-  fmt_main.exceptions(all_error_bits ^ too_many_args_bit);
-  auto fmt_fcgid = format(argc > 2 ? argv[2] : "fcgid");
-  fmt_fcgid.exceptions(all_error_bits ^ too_many_args_bit);
-  auto today = day_clock::local_day();
+  if (argc < 3) return 1;
 
-  while (1) {
-    auto opened_on = today;
-    open(log_main, fmt_main, today);
-    open(log_fcgid, fmt_fcgid, today);
+  string line;
+  string ini(argv[1]);
+  string prefix(argv[2]);
+  ifstream sini(ini);
+  auto cfg = iniphile::parse(sini, cerr);
+  if (!cfg) return 2;
+  auto afg = iniphile::normalize(*cfg);
+
+  auto now = day_clock::local_day();
+
+  ruleset<> rules(afg, prefix, now);
+
+  while (true) {
     while (getline(cin, line)) {
-      today = day_clock::local_day();
-      if (today > opened_on) {
-        log_main.close();
-        log_fcgid.close();
-        break;
-      }
-      ostream *os;
-      if (line.find(" mod_fcgid: stderr: ") != string::npos)
-        os = &log_fcgid;
-      else
-        os = &log_main;
-      *os << line << endl;
+      now = day_clock::local_day();
+      rules.handle(now, line);
     }
   }
+
   return 0;
 }

@@ -4,7 +4,7 @@ CPPFLAGS=-I/usr/local/include
 CXXFLAGS=-std=gnu++0x
 LD=$(CXX)
 LDFLAGS=-L/usr/local/lib
-LIBS=-lboost_date_time
+LIBS=-lboost_date_time -lboost_regex -liniphile
 
 UNAME:=$(shell uname -s)
 
