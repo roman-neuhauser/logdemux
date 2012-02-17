@@ -47,8 +47,8 @@ public:
   , prefix(prefix)
   , final(final)
   , pat(regex(match, regex::perl))
-  , os(expand(sink, now).c_str(), ios::app | ios::binary)
   , opened_on(now)
+  , os(expand(sink, now).c_str(), ios::app | ios::binary)
   {
   } // }}}
   bool
@@ -62,11 +62,11 @@ public:
     return final;
   } // }}}
 private:
-  string const &prefix;
-  date const &opened_on;
   string const &sink;
+  string const &prefix;
   bool final;
   regex pat;
+  date const &opened_on;
   ofstream os;
 
   void

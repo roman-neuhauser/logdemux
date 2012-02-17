@@ -5,9 +5,13 @@ PREFIX?=/usr/local
 BINDIR?=$(PREFIX)/bin
 
 CPPFLAGS=-I/usr/local/include
-CXXFLAGS=-std=gnu++0x
+CXXFLAGS=$(CXXSTD) $(CXXOPTFLAGS) $(CXXWFLAGS)
+CXXSTD=-std=gnu++0x -pedantic
+CXXOPTFLAGS=-g -O2
+CXXWFLAGS=-Wall -Wextra -Wfatal-errors -Wno-long-long
+
 LD=$(CXX)
-LDFLAGS=-L/usr/local/lib
+LDFLAGS=$(CXXOPTFLAGS) -L/usr/local/lib
 LIBS=-lboost_date_time -lboost_regex -liniphile
 
 RM_F?=rm -f
