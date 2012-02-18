@@ -79,7 +79,7 @@ Example
 =======
 
 This configures the Apache web server to log requests into
-`logs/access_log`, 404's are duplicated into `logs/%D-404_log`.
+`logs/%D-access_log`, 404's are duplicated into `logs/%D-404_log`.
 ErrorLog is written into `logs/%D-error_log`, except mod_fcgid, which
 goes into `logs/%D-mod_fcgid_log`, *except* the FCGIWrapper's `stderr`,
 which goes into `logs/%D-php_log`.
