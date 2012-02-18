@@ -1,0 +1,145 @@
+=============================================================================
+                                  Logdemux
+=============================================================================
+-----------------------------------------------------------------------------
+                            Logfile demultiplexer
+-----------------------------------------------------------------------------
+
+:Author: Roman Neuhauser
+:Contact: neuhauser@sigpipe.cz
+:Copyright: This document is in the public domain.
+
+.. this file is marked up using reStructuredText
+   lines beginning with ".." are reST directives
+   "foo_" or "`foo bar`_" is a link, defined at ".. _foo" or ".. _foo bar"
+   "::" introduces a literal block (usually some form of code)
+   "`foo`" is some kind of identifier
+   suspicious backslashes in the text ("`std::string`\s") are required for
+   reST to recognize the preceding character as syntax
+
+.. contents::
+
+Synopsis
+========
+
+::
+
+  logdemux rules prefix
+
+Description
+===========
+
+Logdemux stores lines read from `stdin` into different files based
+on matching those lines with user-specified regular expressions.
+
+Logdemux requires two arguments:
+
+rules
+  configuration file
+prefix
+  substituted into `sink` values (`%P`)
+
+Rules
+=====
+
+The filtering rules are given in an INI-formatted file, see Iniphile_
+for details on general syntax.
+
+Configuration must contain a `rules` section, with `order` property.
+Its value is expected to list rule section names in the order they
+should be used.
+`rules.order` has no default, if it's missing from the configuration,
+logdemux will turn into elaborate `/dev/null`.
+
+Each rule section defines a rule with properties `match`, `sink`,
+and optionally `final`.
+
+`match`
+  Perl-compatible regular expression.
+`sink`
+  log file path.  `%P` is replaced with the `prefix` argument.
+  `%D` is replaced with current date in the `YYYY-MM-DD` format.
+`final`
+  boolean.  `true`, `yes`, `on`, `1` are true, anything else is false.
+
+If the present line does *not* match the pattern in `match`, logdemux
+moves on to the next rule as defined by `rules.order`.
+If the present line *does* match the regular expression from `match`,
+it is written into the filename given in `sink`.
+Then, if the `final` property is present and true, processing of this
+line ends.
+Otherwise, the next rule is tried.
+
+.. _Iniphile: http://codex.sigpipe.cz/iniphile/
+
+Example
+=======
+
+This configures the Apache web server to log requests into
+`logs/access_log`, 404's are duplicated into `logs/%D-404_log`.
+ErrorLog is written into `logs/%D-error_log`, except mod_fcgid, which
+goes into `logs/%D-mod_fcgid_log`, *except* the FCGIWrapper's `stderr`,
+which goes into `logs/%D-php_log`.
+
+httpd.conf: ::
+
+  LogFormat "%{%Y-%m-%d %H:%M:%S}t D=%D h=%h u=%u s=%>s b=%b r=\"%r\""
+  TransferLog "|/usr/local/bin/logdemux conf/logdemux.access logs/"
+  ErrorLog "|/usr/local/bin/logdemux conf/logdemux.error logs/"
+
+logdemux.access: ::
+
+  [rules]
+  order = http-404 default
+
+  [http-404]
+  match = \<s=404\>
+  sink = %P%D-404_log
+
+  [default]
+  match = .
+  sink = %P%D-access_log
+
+logdemux.error: ::
+
+  [rules]
+  order = php mod_fcgid default
+
+  [php]
+  match = \< mod_fcgid: stderr: \>
+  sink = %P%D-php_log
+  final = 1
+
+  [mod_fcgid]
+  match = \< mod_fcgid: \>
+  sink = %P%D-mod_fcgid_log
+  final = 1
+
+  [default]
+  match = .
+  sink = %P%D-error_log
+
+
+Build and Installation
+======================
+
+Requires GNU make, GCC, Iniphile_, and several Boost_ libraries:
+Boost.Datetime, Boost.Foreach, Boost.Regex.
+
+Known to build on / with, presently or at some not too distant past:
+
+* Windows 7, MSYS, gcc-4.6.2, Boost-1.48
+
+.. _Boost: http://boost.org/
+
+Download
+========
+
+Clone the `main repository`_ (uses Mercurial_), or there may be
+some tarballs and even binaries for Windows in `dist/`.
+
+.. _`main repository`: http://hg.sigpipe.cz/logdemux
+.. _Mercurial: http://hg-scm.org/
+.. _`dist/`: http://codex.sigpipe.cz/logdemux/dist/
+
+.. vim: ft=rst sts=2 sw=2 tw=77

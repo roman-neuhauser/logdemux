@@ -26,13 +26,16 @@ else
 dot_exe=
 endif
 
-all: logdemux$(dot_exe)
+all: logdemux$(dot_exe) README.html
 
 clean:
 	$(RM_F) logdemux.o logdemux.exe
 
 install: all
 	$(INSTALL_PROGRAM) logdemux$(dot_exe) $(DESTDIR)$(BINDIR)/logdemux$(dot_exe)
+
+%.html: %.rest
+	rst2html.py $< $@
 
 logdemux$(dot_exe): logdemux.o
 	$(LD) $(LDFLAGS) -o$@ $< $(LIBS)

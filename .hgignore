@@ -2,5 +2,6 @@ syntax: regexp
 
 (_|(\..+))?.sw.?$
 .*\.[ao]$
+.*\.html$
 ^commit$
 ^logdemux(\.exe)?$
