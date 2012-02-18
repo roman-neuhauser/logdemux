@@ -1,3 +1,6 @@
+.. vim: ft=rst sts=2 sw=2 tw=77
+.. default-role:: literal
+
 =============================================================================
                                   Logdemux
 =============================================================================
@@ -142,4 +145,3 @@ some tarballs and even binaries for Windows in `dist/`.
 .. _Mercurial: http://hg-scm.org/
 .. _`dist/`: http://codex.sigpipe.cz/logdemux/dist/
 
-.. vim: ft=rst sts=2 sw=2 tw=77
