@@ -27,7 +27,6 @@
 #define foreach BOOST_FOREACH
 
 using std::cin;
-using std::cout;
 using std::cerr;
 using std::endl;
 using std::ios;
@@ -125,6 +124,12 @@ private:
   } // }}}
 };
 
+date
+today() // {{{
+{
+  return day_clock::local_day();
+} // }}}
+
 template<class Fmt>
 int
 complain(int exitcode, Fmt msg)
@@ -147,7 +152,6 @@ main(int argc, char **argv)
     , format("usage: %1% rules prefix") % bself
     );
 
-  string line;
   string ini(argv[1]);
   string prefix(argv[2]);
   ifstream sini;
@@ -165,14 +169,12 @@ main(int argc, char **argv)
     , format("%1%: rules file '%2%' broken") % bself % ini
     );
 
-  auto afg = iniphile::normalize(*cfg);
-  auto now = day_clock::local_day();
-  ruleset<> rules(afg, prefix, now);
+  ruleset<> rules(iniphile::normalize(*cfg), prefix, today());
 
-  while (true) {
+  string line;
+  while (cin.good()) {
     while (getline(cin, line)) {
-      now = day_clock::local_day();
-      rules.handle(now, line);
+      rules.handle(today(), line);
     }
   }
 
