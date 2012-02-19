@@ -127,7 +127,7 @@ Build and Installation
 ======================
 
 Requires GNU make, GCC, Iniphile_, and several Boost_ libraries:
-Boost.Datetime, Boost.Foreach, Boost.Regex.
+Boost.Datetime, Boost.Foreach, Boost.Format, Boost.Regex.
 
 Known to build on / with, presently or at some not too distant past:
 

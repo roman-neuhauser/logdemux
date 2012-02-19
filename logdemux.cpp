@@ -9,7 +9,13 @@
 #include <string>
 #include <vector>
 
+#define EX_OK           0       /* successful termination */
+#define EX_USAGE        64      /* command line usage error */
+#define EX_DATAERR      65      /* data format error */
+#define EX_NOINPUT      66      /* cannot open input */
+
 #include "boost/foreach.hpp"
+#include "boost/format.hpp"
 #include "boost/date_time/gregorian/gregorian.hpp"
 #include "boost/regex.hpp"
 #include "boost/shared_ptr.hpp"
@@ -30,6 +36,8 @@ using std::ifstream;
 using std::ofstream;
 using std::string;
 using std::vector;
+
+using boost::format;
 
 using namespace boost::gregorian;
 
@@ -117,23 +125,48 @@ private:
   } // }}}
 };
 
+template<class Fmt>
+int
+complain(int exitcode, Fmt msg)
+{
+  cerr << msg << endl;
+  return exitcode;
+}
+
 }
 
 int
 main(int argc, char **argv)
 {
-  if (argc < 3) return 1;
+  string self = argc > 0 ? argv[0] : "logdemux";
+  string bself = self.substr(self.find_last_of("\\/") + 1);
+
+  if (argc < 3)
+    return complain(
+      EX_USAGE
+    , format("usage: %1% rules prefix") % bself
+    );
 
   string line;
   string ini(argv[1]);
   string prefix(argv[2]);
-  ifstream sini(ini);
+  ifstream sini;
+  sini.open(ini);
+  if (sini.fail())
+    return complain(
+      EX_NOINPUT
+    , format("%1%: rules file '%2%' missing") % bself % ini
+    );
+
   auto cfg = iniphile::parse(sini, cerr);
-  if (!cfg) return 2;
+  if (!cfg)
+    return complain(
+      EX_DATAERR
+    , format("%1%: rules file '%2%' broken") % bself % ini
+    );
+
   auto afg = iniphile::normalize(*cfg);
-
   auto now = day_clock::local_day();
-
   ruleset<> rules(afg, prefix, now);
 
   while (true) {
@@ -143,5 +176,5 @@ main(int argc, char **argv)
     }
   }
 
-  return 0;
+  return EX_OK;
 }
