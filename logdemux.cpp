@@ -95,11 +95,10 @@ private:
   } // }}}
 };
 
-template<class Ini = iniphile::ast::node>
 class ruleset
 {
 public:
-  ruleset(Ini const &ini, string const &prefix)
+  ruleset(iniphile::ast::node const &ini, string const &prefix)
   : ini(ini)
   , prefix(prefix)
   {
@@ -114,7 +113,7 @@ public:
         break;
   } // }}}
 private:
-  Ini const &ini;
+  iniphile::ast::node const &ini;
   string const &prefix;
   vector<shared_ptr<rule>> rules;
 
@@ -175,7 +174,7 @@ main(int argc, char **argv)
     , format("%1%: rules file '%2%' broken") % bself % ini
     );
 
-  ruleset<> rules(iniphile::normalize(*cfg), prefix);
+  ruleset rules(iniphile::normalize(*cfg), prefix);
 
   string line;
   while (cin.good()) {
