@@ -17,6 +17,7 @@
 #define EX_DATAERR      65      /* data format error */
 #define EX_NOINPUT      66      /* cannot open input */
 
+#include "boost/ref.hpp"
 #include "boost/foreach.hpp"
 #include "boost/format.hpp"
 #include "boost/date_time/gregorian/gregorian.hpp"
@@ -40,14 +41,34 @@ using std::ofstream;
 using std::string;
 using std::vector;
 
+using boost::cref;
 using boost::format;
-
 using namespace boost::gregorian;
-
 using boost::regex;
+using boost::smatch;
 
 namespace
 {
+
+struct expand_sink // {{{
+{
+  expand_sink(string const &prefix, date const &today)
+  : prefix(prefix)
+  , today(today)
+  {}
+private:
+  string const &prefix;
+  date const &today;
+public:
+  string
+  operator()(smatch const &expando) const
+  {
+    auto sexpando = expando.str();
+    if (sexpando == "%D") return to_iso_extended_string(today);
+    if (sexpando == "%P") return prefix;
+    return "LOGDEMUX-BUG";
+  }
+}; // }}}
 
 class rule
 {
@@ -89,9 +110,11 @@ private:
   string
   expand(string fmt, date const &d) const // {{{
   {
-    fmt = regex_replace(fmt, regex("%D"), to_iso_extended_string(d));
-    fmt = regex_replace(fmt, regex("%P"), prefix);
-    return fmt;
+    return regex_replace(
+      fmt
+    , regex("%[DP]\\>")
+    , cref(expand_sink(prefix, d))
+    );
   } // }}}
 };
 
