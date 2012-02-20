@@ -49,22 +49,22 @@ namespace
 class rule
 {
 public:
-  rule(string const &prefix, date const &now, string const &match, string const &sink, bool final) // {{{
+  rule(string const &prefix, string const &match, string const &sink, bool final) // {{{
   : sink(sink)
   , prefix(prefix)
   , final(final)
   , pat(regex(match, regex::perl))
-  , opened_on(now)
-  , os(expand(sink, now).c_str(), ios::app | ios::binary)
+  , opened_on()
+  , os()
   {
   } // }}}
   bool
-  handle(date const &now, string const &line) // {{{
+  handle(date const &today, string const &line) // {{{
   {
     if (!regex_search(line, pat))
       return false;
-    if (opened_on < now)
-      reopen(os, now);
+    if (opened_on != today)
+      reopen(os, today);
     os << line << endl;
     return final;
   } // }}}
@@ -73,14 +73,15 @@ private:
   string const &prefix;
   bool final;
   regex pat;
-  date const &opened_on;
+  date opened_on;
   ofstream os;
 
   void
-  reopen(ofstream &os, date const &now) // {{{
+  reopen(ofstream &os, date const &today) // {{{
   {
     os.close();
-    os.open(expand(sink, now).c_str(), ios::app | ios::binary);
+    os.open(expand(sink, today).c_str(), ios::app | ios::binary);
+    opened_on = today;
   } // }}}
   string
   expand(string fmt, date const &d) // {{{
@@ -95,12 +96,12 @@ template<class Ini = iniphile::ast::node>
 class ruleset
 {
 public:
-  ruleset(Ini const &ini, string const &prefix, date const &now)
+  ruleset(Ini const &ini, string const &prefix)
   : ini(ini)
   , prefix(prefix)
   {
     foreach (auto &rname, iniphile::get(ini, "rules.order", vector<string>()))
-      create_rule(rname, now);
+      create_rule(rname);
   }
   void
   handle(date const &now, string const &line) // {{{
@@ -115,12 +116,12 @@ private:
   vector<shared_ptr<rule>> rules;
 
   void
-  create_rule(string const &rname, date const &now) // {{{
+  create_rule(string const &rname) // {{{
   {
     auto match = iniphile::get(ini, rname + ".match", string(""));
     auto sink = iniphile::get(ini, rname + ".sink", string(""));
     auto final = iniphile::get(ini, rname + ".final", false);
-    rules.push_back(shared_ptr<rule>(new rule(prefix, now, match, sink, final)));
+    rules.push_back(shared_ptr<rule>(new rule(prefix, match, sink, final)));
   } // }}}
 };
 
@@ -169,7 +170,7 @@ main(int argc, char **argv)
     , format("%1%: rules file '%2%' broken") % bself % ini
     );
 
-  ruleset<> rules(iniphile::normalize(*cfg), prefix, today());
+  ruleset<> rules(iniphile::normalize(*cfg), prefix);
 
   string line;
   while (cin.good()) {
