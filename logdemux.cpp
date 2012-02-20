@@ -36,6 +36,7 @@ using std::cerr;
 using std::endl;
 using std::ios;
 using std::getline;
+using std::ostream;
 using std::ifstream;
 using std::ofstream;
 using std::string;
@@ -73,13 +74,14 @@ public:
 class rule
 {
 public:
-  rule(string const &prefix, string const &match, string const &sink, bool final) // {{{
+  rule(string const &prefix, string const &match, string const &sink, bool final, ostream &diag) // {{{
   : sink(sink)
   , prefix(prefix)
   , final(final)
   , pat(regex(match, regex::perl))
   , opened_on()
   , os()
+  , diag(diag)
   {
   } // }}}
   bool
@@ -88,7 +90,7 @@ public:
     if (!regex_search(line, pat))
       return false;
     if (opened_on != today)
-      reopen(os, today);
+      reopen(today);
     os << line << endl;
     return final;
   } // }}}
@@ -99,13 +101,17 @@ private:
   regex pat;
   date opened_on;
   ofstream os;
+  ostream &diag;
 
   void
-  reopen(ofstream &os, date const &today) // {{{
+  reopen(date const &today) // {{{
   {
     if (os.is_open()) os.close();
     os.clear();
-    os.open(expand(sink, today).c_str(), ios::app | ios::binary);
+    auto fname = expand(sink, today);
+    os.open(fname.c_str(), ios::app | ios::binary);
+    if (os.fail())
+      diag << "failed to open " << fname << endl;
     opened_on = today;
   } // }}}
   string
@@ -122,12 +128,16 @@ private:
 class ruleset
 {
 public:
-  ruleset(iniphile::ast::node const &ini, string const &prefix)
-  : ini(ini)
-  , prefix(prefix)
+  ruleset(iniphile::ast::node const &ini, string const &prefix, ostream &diag)
   {
     foreach (auto const &rname, iniphile::get(ini, "rules.order", vector<string>()))
-      create_rule(rname);
+      rules.push_back(shared_ptr<rule>(new rule(
+        prefix
+      , iniphile::get(ini, rname + ".match", string("")) 
+      , iniphile::get(ini, rname + ".sink", string(""))  
+      , iniphile::get(ini, rname + ".final", false)      
+      , diag
+      )));
   }
   void
   handle(date const &now, string const &line) // {{{
@@ -137,20 +147,7 @@ public:
         break;
   } // }}}
 private:
-  iniphile::ast::node const &ini;
-  string const &prefix;
   vector<shared_ptr<rule>> rules;
-
-  void
-  create_rule(string const &rname) // {{{
-  {
-    rules.push_back(shared_ptr<rule>(new rule(
-      prefix
-    , iniphile::get(ini, rname + ".match", string("")) 
-    , iniphile::get(ini, rname + ".sink", string(""))  
-    , iniphile::get(ini, rname + ".final", false)      
-    )));
-  } // }}}
 };
 
 date
@@ -198,7 +195,7 @@ main(int argc, char **argv)
     , format("%1%: rules file '%2%' broken") % bself % ini
     );
 
-  ruleset rules(iniphile::normalize(*cfg), prefix);
+  ruleset rules(iniphile::normalize(*cfg), prefix, cerr);
 
   string line;
   while (cin.good()) {
