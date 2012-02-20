@@ -79,7 +79,7 @@ private:
   void
   reopen(ofstream &os, date const &today) // {{{
   {
-    os.close();
+    if (os.is_open()) os.close();
     os.open(expand(sink, today).c_str(), ios::app | ios::binary);
     opened_on = today;
   } // }}}
