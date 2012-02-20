@@ -69,8 +69,8 @@ public:
     return final;
   } // }}}
 private:
-  string const &sink;
-  string const &prefix;
+  string const sink;
+  string const prefix;
   bool final;
   regex pat;
   date opened_on;
