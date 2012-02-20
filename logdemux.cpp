@@ -84,7 +84,7 @@ private:
     opened_on = today;
   } // }}}
   string
-  expand(string fmt, date const &d) // {{{
+  expand(string fmt, date const &d) const // {{{
   {
     fmt = regex_replace(fmt, regex("%D"), to_iso_extended_string(d));
     fmt = regex_replace(fmt, regex("%P"), prefix);
@@ -100,13 +100,13 @@ public:
   : ini(ini)
   , prefix(prefix)
   {
-    foreach (auto &rname, iniphile::get(ini, "rules.order", vector<string>()))
+    foreach (auto const &rname, iniphile::get(ini, "rules.order", vector<string>()))
       create_rule(rname);
   }
   void
   handle(date const &now, string const &line) // {{{
   {
-    foreach (shared_ptr<rule> &r, rules)
+    foreach (auto &r, rules)
       if (r->handle(now, line))
         break;
   } // }}}
@@ -118,10 +118,12 @@ private:
   void
   create_rule(string const &rname) // {{{
   {
-    auto match = iniphile::get(ini, rname + ".match", string(""));
-    auto sink = iniphile::get(ini, rname + ".sink", string(""));
-    auto final = iniphile::get(ini, rname + ".final", false);
-    rules.push_back(shared_ptr<rule>(new rule(prefix, match, sink, final)));
+    rules.push_back(shared_ptr<rule>(new rule(
+      prefix
+    , iniphile::get(ini, rname + ".match", string("")) 
+    , iniphile::get(ini, rname + ".sink", string(""))  
+    , iniphile::get(ini, rname + ".final", false)      
+    )));
   } // }}}
 };
 
@@ -153,8 +155,8 @@ main(int argc, char **argv)
     , format("usage: %1% rules prefix") % bself
     );
 
-  string ini(argv[1]);
-  string prefix(argv[2]);
+  string ini = argv[1];
+  string prefix = argv[2];
   ifstream sini;
   sini.open(ini);
   if (sini.fail())
