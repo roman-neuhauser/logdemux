@@ -1,0 +1,9 @@
+[rules]
+order = one two
+[one]
+match = foo
+sink = log-foos.actual
+final = 1
+[two]
+match =
+sink = log-other.actual

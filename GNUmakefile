@@ -29,10 +29,13 @@ endif
 all: logdemux$(dot_exe) README.html
 
 clean:
-	$(RM_F) logdemux.o logdemux.exe
+	$(RM_F) logdemux.o logdemux.exe tests/*/*.actual tests/*/*.diff
 
 install: all
 	$(INSTALL_PROGRAM) logdemux$(dot_exe) $(DESTDIR)$(BINDIR)/logdemux$(dot_exe)
+
+check: all
+	$(SHELL) run-tests.sh tests
 
 %.html: %.rest
 	rst2html.py $< $@

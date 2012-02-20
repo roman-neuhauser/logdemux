@@ -1,0 +1,5 @@
+[rules]
+order = default
+[default]
+match = foo
+sink = foos.actual

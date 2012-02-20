@@ -5,3 +5,4 @@ syntax: regexp
 .*\.html$
 ^commit$
 ^logdemux(\.exe)?$
+^tests/.*\.(actual|diff)$
