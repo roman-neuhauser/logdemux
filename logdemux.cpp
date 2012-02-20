@@ -104,6 +104,7 @@ private:
   reopen(ofstream &os, date const &today) // {{{
   {
     if (os.is_open()) os.close();
+    os.clear();
     os.open(expand(sink, today).c_str(), ios::app | ios::binary);
     opened_on = today;
   } // }}}
