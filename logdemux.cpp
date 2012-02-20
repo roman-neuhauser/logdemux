@@ -2,6 +2,9 @@
 // Distributed under the MIT license (see LICENSE file)
 // vim: sw=2 sts=2 ts=2 fdm=marker cms=\ //\ %s
 
+// shared_ptr
+#include <memory>
+
 #include <iostream>
 #include <istream>
 #include <ostream>
@@ -18,13 +21,14 @@
 #include "boost/format.hpp"
 #include "boost/date_time/gregorian/gregorian.hpp"
 #include "boost/regex.hpp"
-#include "boost/shared_ptr.hpp"
 
 #include "iniphile/input.hpp"
 #include "iniphile/ast.hpp"
 #include "iniphile/output.hpp"
 
 #define foreach BOOST_FOREACH
+
+using std::shared_ptr;
 
 using std::cin;
 using std::cerr;
@@ -41,7 +45,6 @@ using boost::format;
 using namespace boost::gregorian;
 
 using boost::regex;
-using boost::shared_ptr;
 
 namespace
 {
