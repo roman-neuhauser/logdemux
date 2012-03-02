@@ -109,12 +109,12 @@ logdemux.error: ::
   order = php mod_fcgid default
 
   [php]
-  match = \< mod_fcgid: stderr: \>
+  match = [ ]mod_fcgid: stderr:[ ]
   sink = %P%D-php_log
   final = 1
 
   [mod_fcgid]
-  match = \< mod_fcgid: \>
+  match = [ ]mod_fcgid:[ ]
   sink = %P%D-mod_fcgid_log
   final = 1
 
