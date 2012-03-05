@@ -189,6 +189,7 @@ main(int argc, char **argv)
     );
 
   auto cfg = iniphile::parse(sini, cerr);
+  sini.close();
   if (!cfg)
     return complain(
       EX_DATAERR
