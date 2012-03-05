@@ -12,7 +12,7 @@ CXXWFLAGS=-Wall -Wextra -Wfatal-errors -Wno-long-long
 
 LD=$(CXX)
 LDFLAGS=$(CXXOPTFLAGS) -L/usr/local/lib
-LIBS=-lboost_date_time -lboost_regex -liniphile
+LIBS=$(link_mode) -lboost_date_time -lboost_regex -liniphile
 
 RM_F?=rm -f
 INSTALL?=install
@@ -22,8 +22,12 @@ UNAME:=$(shell uname -s)
 
 ifeq (MINGW,$(findstring MINGW,$(UNAME)))
 dot_exe=.exe
+link_mode=-Wl,-Bstatic
 else
 dot_exe=
+endif
+ifeq (static, $(LINK_MODE))
+link_mode=-Wl,-Bstatic
 endif
 
 all: logdemux$(dot_exe) README.html
