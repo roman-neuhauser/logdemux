@@ -40,7 +40,7 @@ install: all
 	$(INSTALL_PROGRAM) logdemux$(dot_exe) $(DESTDIR)$(BINDIR)/logdemux$(dot_exe)
 
 check: all
-	$(SHELL) run-tests.sh tests
+	SHELL=$(SHELL) $(SHELL) run-tests.sh tests
 
 %.html: %.rest
 	$(RST2HTML) $< $@
