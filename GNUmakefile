@@ -17,6 +17,7 @@ LIBS=$(link_mode) -lboost_date_time -lboost_regex -liniphile
 RM_F?=rm -f
 INSTALL?=install
 INSTALL_PROGRAM?=$(INSTALL) -s
+RST2HTML?=rst2html.py
 
 UNAME:=$(shell uname -s)
 
@@ -42,7 +43,7 @@ check: all
 	$(SHELL) run-tests.sh tests
 
 %.html: %.rest
-	rst2html.py $< $@
+	$(RST2HTML) $< $@
 
 logdemux$(dot_exe): logdemux.o
 	$(LD) $(LDFLAGS) -o$@ $< $(LIBS)
