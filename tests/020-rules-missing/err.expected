@@ -1,1 +1,1 @@
-logdemux.exe: rules file 'missing' missing
+logdemux: rules file 'missing' missing

@@ -170,7 +170,11 @@ int
 main(int argc, char **argv)
 {
   string self = argc > 0 ? argv[0] : "logdemux";
-  string bself = self.substr(self.find_last_of("\\/") + 1);
+  string bself = regex_replace(
+    self
+  , regex("^(.*/)?([^/]+)(.exe)?$", regex::perl)
+  , "$2"
+  );
 
   if (argc < 3)
     return complain(
