@@ -78,7 +78,7 @@ public:
   : sink(sink)
   , prefix(prefix)
   , final(final)
-  , pat(regex(match, regex::perl))
+  , pat(match, regex::perl)
   , opened_on()
   , os()
   , diag(diag)
