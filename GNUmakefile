@@ -34,7 +34,7 @@ endif
 all: logdemux$(dot_exe) README.html
 
 clean:
-	$(RM_F) logdemux.o logdemux$(dot_exe) tests/*/*.actual tests/*/*.diff
+	$(RM_F) logdemux.o logdemux$(dot_exe) tests/*/*.actual tests/*/*.diff README.html
 
 install: all
 	$(INSTALL_PROGRAM) logdemux$(dot_exe) $(DESTDIR)$(BINDIR)/logdemux$(dot_exe)
