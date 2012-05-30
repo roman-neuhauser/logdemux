@@ -17,9 +17,15 @@ LIBS=$(link_mode) -lboost_date_time -lboost_regex -liniphile
 RM_F?=rm -f
 INSTALL?=install
 INSTALL_PROGRAM?=$(INSTALL) -s
-RST2HTML?=rst2html.py
+RST2HTML?=$(call first_in_path,rst2html.py rst2html)
 
 UNAME:=$(shell uname -s)
+
+define first_in_path
+  $(firstword $(wildcard \
+    $(foreach p,$(1),$(addsuffix /$(p),$(subst :, ,$(PATH)))) \
+  ))
+endef
 
 ifeq (MINGW,$(findstring MINGW,$(UNAME)))
 dot_exe=.exe
