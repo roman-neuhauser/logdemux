@@ -115,7 +115,7 @@ private:
     opened_on = today;
   } // }}}
   string
-  expand(string fmt, date const &d) const // {{{
+  expand(string const &fmt, date const &d) const // {{{
   {
     return regex_replace(
       fmt
