@@ -129,9 +129,10 @@ Build and Installation
 Requires GNU make, GCC, Iniphile_, and several Boost_ libraries:
 Boost.Datetime, Boost.Foreach, Boost.Format, Boost.Regex.
 
-Known to build on / with, presently or at some not too distant past:
+Known to build on or with, presently or at some not too distant past:
 
 * OpenSUSE 12.1, clang-3.0, Boost-1.49
+* OpenSUSE 12.1, gcc-4.6.2, Boost-1.49
 * OpenSUSE 12.1, gcc-4.6.2, Boost-1.46
 * Windows 7, MSYS, gcc-4.6.2, Boost-1.48
 
