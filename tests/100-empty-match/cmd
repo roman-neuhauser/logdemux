@@ -1,1 +1,1 @@
-"$1" rules '' <./input
+exec "$1" rules '' <./input
