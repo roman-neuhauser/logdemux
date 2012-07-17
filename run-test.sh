@@ -3,10 +3,10 @@
 # vim: sw=2 sts=2 ts=2 et
 
 curdir="$PWD"
-testdir="$1"
+testdir="$1"; shift
 rm -f "$testdir"/*.actual
 cd "$testdir" || exit 1
-$SHELL cmd "$LOGDEMUX" >out.actual 2>err.actual
+$SHELL ./cmd ${1+"$@"} >out.actual 2>err.actual
 ex=$?
 cd "$curdir"
 echo $ex > "$testdir"/exit.actual

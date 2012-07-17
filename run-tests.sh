@@ -2,9 +2,7 @@
 # Distributed under the MIT license (see LICENSE file)
 # vim: sw=2 sts=2 ts=2 et
 
-testdir="${1:?}"
-
-export LOGDEMUX="$PWD/logdemux"
+testdir="${1:?}"; shift
 
 cnt=0
 ex=0
@@ -12,7 +10,7 @@ failures=
 
 for d in "$testdir"/???-*; do
   cnt=$((cnt + 1))
-  "$SHELL" run-test.sh "$d"
+  "$SHELL" run-test.sh "$d" ${1+"$@"}
   tex=$?
   if test 0 -eq $tex; then
     printf .

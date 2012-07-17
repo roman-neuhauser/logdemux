@@ -46,7 +46,7 @@ install: all
 	$(INSTALL_PROGRAM) logdemux$(dot_exe) $(DESTDIR)$(BINDIR)/logdemux$(dot_exe)
 
 check: all
-	SHELL=$(SHELL) $(SHELL) run-tests.sh tests
+	SHELL=$(SHELL) $(SHELL) run-tests.sh tests "$$PWD/logdemux"
 
 %.html: %.rest
 	$(RST2HTML) $< $@
