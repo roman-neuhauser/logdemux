@@ -200,7 +200,15 @@ main(int argc, char **argv)
     , format("%1%: rules file '%2%' broken") % bself % ini
     );
 
-  ruleset rules(iniphile::normalize(*cfg), prefix, cerr);
+  auto afg(iniphile::normalize(*cfg));
+
+  if (iniphile::get(afg, "rules.order", string("")) == "")
+    return complain(
+      EX_DATAERR
+    , format("%1%: no rules.order in '%2%'") % bself % ini
+    );
+
+  ruleset rules(afg, prefix, cerr);
 
   string line;
   while (cin.good()) {

@@ -51,8 +51,6 @@ for details on general syntax.
 Configuration must contain a `rules` section, with `order` property.
 Its value is expected to list rule section names in the order they
 should be used.
-`rules.order` has no default, if it's missing from the configuration,
-logdemux will turn into elaborate `/dev/null`.
 
 Each rule section defines a rule with properties `match`, `sink`,
 and optionally `final`.

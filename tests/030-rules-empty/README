@@ -1,6 +1,0 @@
-logdemux permits an empty ruleset
-
-this test asserts only that logdemux accepts an empty ruleset,
-not what it does with input in such situation.  both behaviors
-(the acceptance and the untested input-goes-to-dev-null) are
-questionable and deserve revisiting.

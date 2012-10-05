@@ -1,0 +1,8 @@
+logdemux rejects a config file without `rules.order`
+
+logdemux needs this directive to be able to query the file,
+without `rules.order` the file could be empty just as well.
+
+* exit code should be 65
+* stderr should contain an error message
+* stdout should be empty
