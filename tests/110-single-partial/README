@@ -1,0 +1,3 @@
+input lines matching a rule go to the corresponding sink
+
+... while lines not matched by a rule go nowhere.

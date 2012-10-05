@@ -1,0 +1,5 @@
+running logdemux with a nonexistent rules path yields error, failure
+
+* exit code is 66
+* stderr has the error message
+* stdout is empty

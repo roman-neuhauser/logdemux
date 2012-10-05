@@ -1,0 +1,3 @@
+logdemux permits nonexistent rules in rules.order
+
+this behavior is questionable and deserves revisiting.

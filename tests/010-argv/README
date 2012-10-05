@@ -1,0 +1,7 @@
+running logdemux with one argument yields usage, failure
+
+logdemux requires two arguments.
+
+* exit code is 64
+* stderr has the usage string
+* stdout is empty

@@ -1,0 +1,3 @@
+input matching more than one rule goes to all corresponding sinks
+
+this is only true when no `final` rule is involved of course.
