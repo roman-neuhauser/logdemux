@@ -1,0 +1,203 @@
+.\" This document is in the public domain.
+.\" vim: fdm=marker
+.
+.\" FRONT MATTER {{{
+.Dd Oct 10, 2012
+.Os
+.Dt LOGDEMUX 1
+.
+.Sh NAME
+.Nm logdemux
+.Nd Logfile demultiplexer
+.\" FRONT MATTER }}}
+.
+.\" SYNOPSIS {{{
+.Sh SYNOPSIS
+.Nm
+.Ar rules
+.Ar prefix
+.\" SYNOPSIS }}}
+.
+.\" DESCRIPTION {{{
+.Sh DESCRIPTION
+.Nm
+stores lines read from the standard input into different
+files based on matching those lines with user-specified
+regular expressions.
+.
+.Bl -tag -width "xx"
+.It Ar rules
+configuration file
+.It Ar prefix
+substituted into
+.Li sink
+values
+.Pq Li \&%P
+.El
+.Pp
+.
+.Ss Rules
+.
+The filtering rules are given in an INI-formatted file, see
+Iniphile for details on general syntax.
+.Pp
+Configuration must contain a
+.Ql rules
+section, with
+.Ql order
+property.
+Its value is expected to list rule section names in the order they
+should be used.
+.Pp
+Each rule section defines a rule with properties
+.Ql match ,
+.Ql sink ,
+and optionally
+.Ql final .
+.Pp
+.
+.Bl -tag -width "xx"
+.It Li match
+Perl-compatible regular expression.
+.
+.It Li sink
+Log file path.
+.Li \&%P
+is replaced with the
+.Ar prefix
+argument.
+.Li \&%D
+is replaced with current date in the
+.Li YYYY-MM-DD
+format.
+.
+.It Li final
+Boolean.
+.Li true , yes , on , 1
+are true, anything else is false.
+.El
+.
+.Pp
+If the present line does not match the pattern in
+.Ql match ,
+.Nm
+moves on to the next rule as defined by
+.Ql rules.order .
+If the present line does match the regular expression from
+.Ql match ,
+it is written into the filename given in
+.Ql sink .
+Then, if the
+.Ql final
+property is present and true, processing of this line ends.
+Otherwise, the next rule is tried.
+.
+.\" DESCRIPTION }}}
+.\" .Sh IMPLEMENTATION NOTES
+.\" ENVIRONMENT {{{
+.Sh ENVIRONMENT
+None.
+.\" ENVIRONMENT }}}
+.\" .Sh FILES
+.\" EXAMPLES {{{
+.Sh EXAMPLES
+This configures the Apache web server to log requests into
+.Pa logs/%D-access_log ,
+404's are duplicated into
+.Pa logs/%D-404_log .
+.Pp
+ErrorLog is written into
+.Pa logs/%D-error_log ,
+except mod_fcgid, which goes into
+.Pa logs/%D-mod_fcgid_log ,
+except the FCGIWrapper's
+.Li stderr ,
+which goes into
+.Pa logs/%D-php_log .
+.Pp
+Note that
+.Ql \&%D
+is replaced with current date; see
+.Sx DESCRIPTION .
+.
+.Pp
+.Pa httpd.conf :
+.
+.Bd -literal -offset "xx"
+LogFormat "%{%Y-%m-%d %H:%M:%S}t D=%D h=%h u=%u s=%>s b=%b r=\e"%r\e""
+TransferLog "|/usr/local/bin/logdemux conf/logdemux.access logs/"
+ErrorLog "|/usr/local/bin/logdemux conf/logdemux.error logs/"
+.Ed
+.
+.Pp
+.Pa logdemux.access :
+.
+.Bd -literal -offset "xx"
+[rules]
+order = http-404 default
+
+[http-404]
+match = \e<s=404\e>
+sink = %P%D-404_log
+
+[default]
+match = .
+sink = %P%D-access_log
+.Ed
+.
+.Pp
+.Pa logdemux.error :
+.
+.Bd -literal -offset "xx"
+[rules]
+order = php mod_fcgid default
+
+[php]
+match = [ ]mod_fcgid: stderr:[ ]
+sink = %P%D-php_log
+final = 1
+
+[mod_fcgid]
+match = [ ]mod_fcgid:[ ]
+sink = %P%D-mod_fcgid_log
+final = 1
+
+[default]
+match = .
+sink = %P%D-error_log
+.Ed
+.
+.\" EXAMPLES }}}
+.\" DIAGNOSTICS {{{
+.Sh DIAGNOSTICS
+.Ss Exit code
+.Bl -tag -width "xxxx" -compact
+.It 0
+successful operation
+.It 66
+the input file could not be open
+.It 65
+syntax error in input file
+.It 64
+wrong (number of) arguments
+.El
+.\" DIAGNOSTICS }}}
+.\" .Sh COMPATIBILITY
+.\" .Sh SEE ALSO {{{
+.Sh SEE ALSO
+Iniphile
+.Aq http://codex.sigpipe.cz/iniphile/
+.\" .Sh SEE ALSO }}}
+.\" .Sh STANDARDS
+.\" .Sh HISTORY
+.\" AUTHORS {{{
+.Sh AUTHORS
+.
+.Nm
+and this manual page are written by
+.Aq neuhauser@sigpipe.cz .
+.Pp
+See
+.Aq http://codex.sigpipe.cz/logdemux/ .
+.\" AUTHORS }}}
+.\" .Sh BUGS

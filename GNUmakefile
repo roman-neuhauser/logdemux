@@ -3,6 +3,8 @@
 DESTDIR?=
 PREFIX?=/usr/local
 BINDIR?=$(PREFIX)/bin
+MANDIR?=$(PREFIX)/man
+MAN1DIR?=$(MANDIR)/man1
 
 CPPFLAGS=-I/usr/local/include
 CXXFLAGS=$(CXXSTD) $(CXXOPTFLAGS) $(CXXWFLAGS)
@@ -44,6 +46,7 @@ clean:
 
 install: all
 	$(INSTALL_PROGRAM) logdemux$(dot_exe) $(DESTDIR)$(BINDIR)/logdemux$(dot_exe)
+	$(INSTALL) iniphile.1 $(DESTDIR)$(MAN1DIR)/iniphile.1
 
 check: all
 	SHELL=$(SHELL) $(SHELL) run-tests.sh tests "$$PWD/logdemux"
