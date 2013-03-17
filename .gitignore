@@ -1,0 +1,10 @@
+.sw?
+.*.sw?
+_.sw?
+*.html
+*.o
+*.obj
+logdemux
+logdemux.exe
+tests/*/*.actual
+tests/*/*.diff
