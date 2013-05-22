@@ -49,7 +49,7 @@ install: all
 	$(INSTALL) iniphile.1 $(DESTDIR)$(MAN1DIR)/iniphile.1
 
 check: all
-	SHELL=$(SHELL) $(SHELL) run-tests.sh tests "$$PWD/logdemux"
+	SHELL=$(SHELL) $(SHELL) rnt/run-tests.sh tests "$$PWD/logdemux"
 
 %.html: %.rest
 	$(RST2HTML) $< $@

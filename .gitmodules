@@ -1,0 +1,3 @@
+[submodule "rnt"]
+	path = rnt
+	url = git@github.com:roman-neuhauser/rnt.git
