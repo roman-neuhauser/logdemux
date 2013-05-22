@@ -8,7 +8,7 @@ MAN1DIR?=$(MANDIR)/man1
 
 CPPFLAGS=-I/usr/local/include
 CXXFLAGS=$(CXXSTD) $(CXXOPTFLAGS) $(CXXWFLAGS)
-CXXSTD=-std=gnu++0x -pedantic
+CXXSTD=-std=c++0x -pedantic
 CXXOPTFLAGS=-g -O2
 CXXWFLAGS=-Wall -Wextra -Wfatal-errors -Wno-long-long
 
