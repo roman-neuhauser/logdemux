@@ -143,3 +143,9 @@ Git_ repository: http://github.com/roman-neuhauser/logdemux
 
 .. _Git: http://git-scm.org/
 
+License
+=======
+
+MIT_.
+
+.. _MIT: LICENSE
