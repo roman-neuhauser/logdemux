@@ -139,10 +139,7 @@ Known to build on or with, presently or at some not too distant past:
 Download
 ========
 
-Clone the `main repository`_ (uses Mercurial_), or there may be
-some tarballs and even binaries for Windows in `dist/`.
+Git_ repository: http://github.com/roman-neuhauser/logdemux
 
-.. _`main repository`: http://hg.sigpipe.cz/logdemux
-.. _Mercurial: http://hg-scm.org/
-.. _`dist/`: http://codex.sigpipe.cz/logdemux/dist/
+.. _Git: http://git-scm.org/
 

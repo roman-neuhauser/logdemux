@@ -1,8 +1,0 @@
-syntax: regexp
-
-(_|(\..+))?.sw.?$
-.*\.[ao]$
-.*\.html$
-^commit$
-^logdemux(\.exe)?$
-^tests/.*\.(actual|diff)$
