@@ -1,0 +1,38 @@
+# norootforbuild
+
+Name:           logdemux
+Version:        __VERSION__
+Release:        0
+License:        MIT
+Summary:        Logfile demultiplexer
+Url:            https://github.com/roman-neuhauser/%{name}
+Group:          Productivity/Text/Utilities
+Requires:       coreutils
+Source:         %{name}-%{version}.tar.gz
+BuildRequires:  boost-devel
+BuildRequires:  coreutils
+BuildRequires:  filesystem
+BuildRequires:  gcc-c++
+BuildRequires:  gzip
+BuildRequires:  libiniphile-devel
+BuildRequires:  make
+BuildRoot:      %_tmppath/%name-%version-build
+
+%description
+Logdemux stores lines read from stdin into different files based on
+matching those lines with user-specified regular expressions.
+
+%prep
+%setup -q
+
+%build
+
+%install
+make install DESTDIR=%{buildroot} PREFIX=%{_prefix} MANDIR=%{_mandir}
+
+%files
+%defattr(-,root,root)
+%{_bindir}/logdemux
+%{_mandir}/man1/logdemux.1.gz
+
+%changelog
