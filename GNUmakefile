@@ -20,6 +20,7 @@ LIBS=$(link_mode) -lboost_date_time -lboost_regex -liniphile
 
 RM_F?=rm -f
 INSTALL?=install
+INSTALL_DIR?=$(INSTALL) -d
 INSTALL_PROGRAM?=$(INSTALL) -s
 RST2HTML?=$(call first_in_path,rst2html.py rst2html)
 
@@ -47,6 +48,8 @@ clean:
 	$(RM_F) logdemux.o logdemux$(dot_exe) tests/*/*.actual tests/*/*.diff README.html
 
 install: all
+	$(INSTALL_DIR) $(DESTDIR)$(BINDIR)
+	$(INSTALL_DIR) $(DESTDIR)$(MAN1DIR)
 	$(INSTALL_PROGRAM) logdemux$(dot_exe) $(DESTDIR)$(BINDIR)/logdemux$(dot_exe)
 	$(INSTALL) logdemux.1 $(DESTDIR)$(MAN1DIR)/logdemux.1
 
