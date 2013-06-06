@@ -20,9 +20,11 @@ LIBS=$(link_mode) -lboost_date_time -lboost_regex -liniphile
 
 RM_F?=rm -f
 INSTALL?=install
+INSTALL_DATA?=$(INSTALL) -m 0644
 INSTALL_DIR?=$(INSTALL) -d
 INSTALL_PROGRAM?=$(INSTALL) -s
 RST2HTML?=$(call first_in_path,rst2html.py rst2html)
+GZIP?=gzip
 
 UNAME:=$(shell uname -s)
 
@@ -42,19 +44,22 @@ ifeq (static, $(LINK_MODE))
 link_mode=-Wl,-Bstatic
 endif
 
-all: logdemux$(dot_exe)
+all: logdemux$(dot_exe) logdemux.1.gz
 
 clean:
-	$(RM_F) logdemux.o logdemux$(dot_exe) tests/*/*.actual tests/*/*.diff README.html
+	$(RM_F) logdemux.o logdemux$(dot_exe) logdemux.1.gz tests/*/*.actual tests/*/*.diff README.html
 
 install: all
 	$(INSTALL_DIR) $(DESTDIR)$(BINDIR)
 	$(INSTALL_DIR) $(DESTDIR)$(MAN1DIR)
 	$(INSTALL_PROGRAM) logdemux$(dot_exe) $(DESTDIR)$(BINDIR)/logdemux$(dot_exe)
-	$(INSTALL) logdemux.1 $(DESTDIR)$(MAN1DIR)/logdemux.1
+	$(INSTALL_DATA) logdemux.1.gz $(DESTDIR)$(MAN1DIR)/logdemux.1.gz
 
 check: all
 	SHELL=$(SHELL) $(SHELL) rnt/run-tests.sh tests "$$PWD/logdemux"
+
+%.1.gz: %.1
+	$(GZIP) < $< > $@
 
 %.html: %.rest
 	$(RST2HTML) $< $@
