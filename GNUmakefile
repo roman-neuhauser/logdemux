@@ -6,14 +6,16 @@ BINDIR?=$(PREFIX)/bin
 MANDIR?=$(PREFIX)/man
 MAN1DIR?=$(MANDIR)/man1
 
-CPPFLAGS=-I/usr/local/include
+BOOSTDIR?=$(PREFIX)
+
+CPPFLAGS=-I$(BOOSTDIR)/include
 CXXFLAGS=$(CXXSTD) $(CXXOPTFLAGS) $(CXXWFLAGS)
 CXXSTD=-std=c++0x -pedantic
 CXXOPTFLAGS=-g -O2
 CXXWFLAGS=-Wall -Wextra -Wfatal-errors -Wno-long-long
 
 LD=$(CXX)
-LDFLAGS=$(CXXOPTFLAGS) -L/usr/local/lib
+LDFLAGS=$(CXXOPTFLAGS) -L$(BOOSTDIR)/lib
 LIBS=$(link_mode) -lboost_date_time -lboost_regex -liniphile
 
 RM_F?=rm -f
