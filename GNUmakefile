@@ -41,7 +41,7 @@ ifeq (static, $(LINK_MODE))
 link_mode=-Wl,-Bstatic
 endif
 
-all: logdemux$(dot_exe) README.html
+all: logdemux$(dot_exe)
 
 clean:
 	$(RM_F) logdemux.o logdemux$(dot_exe) tests/*/*.actual tests/*/*.diff README.html
