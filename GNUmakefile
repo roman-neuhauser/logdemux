@@ -48,7 +48,7 @@ clean:
 
 install: all
 	$(INSTALL_PROGRAM) logdemux$(dot_exe) $(DESTDIR)$(BINDIR)/logdemux$(dot_exe)
-	$(INSTALL) iniphile.1 $(DESTDIR)$(MAN1DIR)/iniphile.1
+	$(INSTALL) logdemux.1 $(DESTDIR)$(MAN1DIR)/logdemux.1
 
 check: all
 	SHELL=$(SHELL) $(SHELL) rnt/run-tests.sh tests "$$PWD/logdemux"
