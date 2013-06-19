@@ -72,6 +72,7 @@ public:
 }; // }}}
 
 class rule
+// {{{
 {
 public:
   rule(string const &prefix, string const &match, string const &sink, bool final, ostream &diag) // {{{
@@ -123,12 +124,13 @@ private:
     , cref(expand_sink(prefix, d))
     );
   } // }}}
-};
+}; // }}}
 
 class ruleset
+// {{{
 {
 public:
-  ruleset(iniphile::ast::node const &ini, string const &prefix, ostream &diag)
+  ruleset(iniphile::ast::node const &ini, string const &prefix, ostream &diag) // {{{
   {
     foreach (auto const &rname, iniphile::get(ini, "rules.order", vector<string>()))
       rules.push_back(shared_ptr<rule>(new rule(
@@ -138,7 +140,7 @@ public:
       , iniphile::get(ini, rname + ".final", false)      
       , diag
       )));
-  }
+  } // }}}
   void
   handle(date const &now, string const &line) // {{{
   {
@@ -148,7 +150,7 @@ public:
   } // }}}
 private:
   vector<shared_ptr<rule>> rules;
-};
+}; // }}}
 
 date
 today() // {{{
@@ -158,11 +160,11 @@ today() // {{{
 
 template<class Fmt>
 int
-complain(int exitcode, Fmt msg)
+complain(int exitcode, Fmt msg) // {{{
 {
   cerr << msg << endl;
   return exitcode;
-}
+} // }}}
 
 }
 
