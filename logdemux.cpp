@@ -166,17 +166,22 @@ complain(int exitcode, Fmt msg) // {{{
   return exitcode;
 } // }}}
 
+string
+basename(string const &path) // {{{
+{
+  return regex_replace(
+    path
+  , regex("^(.*/)?([^/]+)(.exe)?$", regex::perl)
+  , "$2"
+  );
+} // }}}
+
 }
 
 int
 main(int argc, char **argv)
 {
-  string self = argc > 0 ? argv[0] : "logdemux";
-  string bself = regex_replace(
-    self
-  , regex("^(.*/)?([^/]+)(.exe)?$", regex::perl)
-  , "$2"
-  );
+  string bself = argc ? basename(argv[0]) : "logdemux";
 
   if (argc < 3)
     return complain(
