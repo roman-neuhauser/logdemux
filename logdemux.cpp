@@ -181,41 +181,41 @@ basename(string const &path) // {{{
 int
 main(int argc, char **argv)
 {
-  string bself = argc ? basename(argv[0]) : "logdemux";
+  string self = argc ? basename(argv[0]) : "logdemux";
 
   if (argc < 3)
     return complain(
       EX_USAGE
-    , format("usage: %1% rules prefix") % bself
+    , format("usage: %1% rules prefix") % self
     );
 
-  string ini = argv[1];
+  string inipath = argv[1];
   string prefix = argv[2];
-  ifstream sini;
-  sini.open(ini);
-  if (sini.fail())
+  ifstream input;
+  input.open(inipath);
+  if (input.fail())
     return complain(
       EX_NOINPUT
-    , format("%1%: rules file '%2%' missing") % bself % ini
+    , format("%1%: rules file '%2%' missing") % self % inipath
     );
 
-  auto cfg = iniphile::parse(sini, cerr);
-  sini.close();
-  if (!cfg)
+  auto ini = iniphile::parse(input, cerr);
+  input.close();
+  if (!ini)
     return complain(
       EX_DATAERR
-    , format("%1%: rules file '%2%' broken") % bself % ini
+    , format("%1%: rules file '%2%' broken") % self % inipath
     );
 
-  auto afg(iniphile::normalize(*cfg));
+  auto cfg(iniphile::normalize(*ini));
 
-  if (iniphile::get(afg, "rules.order", string("")) == "")
+  if (iniphile::get(cfg, "rules.order", string("")) == "")
     return complain(
       EX_DATAERR
-    , format("%1%: no rules.order in '%2%'") % bself % ini
+    , format("%1%: no rules.order in '%2%'") % self % inipath
     );
 
-  ruleset rules(afg, prefix, cerr);
+  ruleset rules(cfg, prefix, cerr);
 
   string line;
   while (cin.good()) {
