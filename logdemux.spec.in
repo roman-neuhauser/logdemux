@@ -18,6 +18,8 @@ BuildRequires:  libiniphile-devel
 BuildRequires:  make
 BuildRoot:      %_tmppath/%name-%version-build
 
+%define ldmx_make make PREFIX=%{_prefix} MANDIR=%{_mandir}
+
 %description
 Logdemux stores lines read from stdin into different files based on
 matching those lines with user-specified regular expressions.
@@ -26,9 +28,10 @@ matching those lines with user-specified regular expressions.
 %setup -q
 
 %build
+%ldmx_make all
 
 %install
-make install DESTDIR=%{buildroot} PREFIX=%{_prefix} MANDIR=%{_mandir}
+%ldmx_make install DESTDIR=%{buildroot}
 
 %files
 %defattr(-,root,root)
