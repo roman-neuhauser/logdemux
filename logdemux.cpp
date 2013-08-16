@@ -199,7 +199,7 @@ main(int argc, char **argv)
     , format("%1%: rules file '%2%' missing") % self % inipath
     );
 
-  auto ini = iniphile::parse(input, cerr);
+  auto ini = iniphile::parse(inipath, input, cerr);
   input.close();
   if (!ini)
     return complain(
