@@ -5,6 +5,7 @@ _.sw?
 *.o
 *.obj
 logdemux
+logdemux.1.gz
 logdemux.exe
 tests/*/*.actual
 tests/*/*.diff
