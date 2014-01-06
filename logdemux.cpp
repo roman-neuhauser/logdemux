@@ -16,6 +16,7 @@
 #define EX_USAGE        64      /* command line usage error */
 #define EX_DATAERR      65      /* data format error */
 #define EX_NOINPUT      66      /* cannot open input */
+#define EX_SOFTWARE     70      /* internal software error */
 
 #include "boost/ref.hpp"
 #include "boost/foreach.hpp"
@@ -30,6 +31,8 @@
 #define foreach BOOST_FOREACH
 
 using std::shared_ptr;
+
+using std::exception;
 
 using std::cin;
 using std::cerr;
@@ -70,6 +73,12 @@ public:
     return "LOGDEMUX-BUG";
   }
 }; // }}}
+
+struct logdemux_error
+: exception {};
+
+struct missing_rules_order
+: logdemux_error {};
 
 class rule
 // {{{
@@ -132,7 +141,11 @@ class ruleset
 public:
   ruleset(iniphile::ast::node const &ini, string const &prefix, ostream &diag) // {{{
   {
-    foreach (auto const &rname, iniphile::get(ini, "rules.order", vector<string>()))
+    auto order = iniphile::get(ini, "rules.order", vector<string>());
+    if (order.empty())
+      throw missing_rules_order();
+
+    foreach (auto const &rname, order)
       rules.push_back(shared_ptr<rule>(new rule(
         prefix
       , iniphile::get(ini, rname + ".match", string("")) 
@@ -209,20 +222,27 @@ main(int argc, char **argv)
 
   auto cfg(iniphile::normalize(*ini));
 
-  if (iniphile::get(cfg, "rules.order", string("")) == "")
+  try {
+    ruleset rules(cfg, prefix, cerr);
+
+    string line;
+    while (cin.good()) {
+      while (getline(cin, line)) {
+        rules.handle(today(), line);
+      }
+    }
+
+    return EX_OK;
+  } catch (missing_rules_order &e) {
     return complain(
       EX_DATAERR
     , format("%1%: no rules.order in '%2%'") % self % inipath
     );
-
-  ruleset rules(cfg, prefix, cerr);
-
-  string line;
-  while (cin.good()) {
-    while (getline(cin, line)) {
-      rules.handle(today(), line);
-    }
+  } catch (exception &e) {
+    return complain(
+      EX_SOFTWARE
+    , format("%1%: internal error: %2%") % self % e.what()
+    );
   }
-
-  return EX_OK;
+  // let other exceptions cause std::terminate
 }
