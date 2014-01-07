@@ -77,20 +77,16 @@ Boolean.
 are true, anything else is false.
 .El
 .
-.Pp
-If the present line does not match the pattern in
-.Ql match ,
-.Nm
-moves on to the next rule as defined by
-.Ql rules.order .
-If the present line does match the regular expression from
-.Ql match ,
-it is written into the filename given in
-.Ql sink .
-Then, if the
-.Ql final
-property is present and true, processing of this line ends.
-Otherwise, the next rule is tried.
+.Ss Operation
+Runtime behavior conforms to this pseudocode:
+.Bd -literal
+  for each line of input
+    for each rule of rules.order
+      if rule.match line
+        write line to rule.sink
+        if rule.final
+          next line
+.Ed
 .
 .\" DESCRIPTION }}}
 .\" .Sh IMPLEMENTATION NOTES
