@@ -21,6 +21,7 @@
    reST to recognize the preceding character as syntax
 
 .. contents::
+    :depth: 1
 
 Synopsis
 ========
@@ -121,29 +122,48 @@ logdemux.error: ::
   sink = %P%D-error_log
 
 
-Build and Installation
-======================
-
-Requires GNU make, GCC, Iniphile_, and several Boost_ libraries:
-Boost.Datetime, Boost.Foreach, Boost.Format, Boost.Regex.
-
-Known to build on or with, presently or at some not too distant past:
-
-* OpenSUSE 12.1, clang-3.0, Boost-1.49
-* OpenSUSE 12.1, gcc-4.6.2, Boost-1.49
-* OpenSUSE 12.1, gcc-4.6.2, Boost-1.46
-* OpenSUSE 12.3, gcc-4.7.2, Boost-1.49
-* OpenSUSE 12.3, clang-3.2, Boost-1.49
-* Windows 7, MSYS, gcc-4.6.2, Boost-1.48
-
-.. _Boost: http://boost.org/
-
 Download
 ========
+
+Source
+++++++
 
 Git_ repository: http://github.com/roman-neuhauser/logdemux
 
 .. _Git: http://git-scm.org/
+
+Binaries
+++++++++
+
+Packages for some GNU/Linux distributions, are available
+in the `Build Service`_.
+
+.. _Build Service:
+    http://software.opensuse.org/package/logdemux?search_term=logdemux
+
+Build
+=====
+
+::
+
+  % make check && sudo make install
+
+Logdemux is written in a subset of C++11 (mostly C++03 with `auto`).
+As of writing this (logdemux-0.3), logdemux builds with gcc-4.7.2
+and clang-3.2.
+
+Logdemux uses Iniphile_ and several Boost_ libraries: Boost.Datetime,
+Boost.Foreach, Boost.Format, Boost.Regex.
+
+The provided Makefile requires GNU make, and supports the usual knobs
+including ``DESTDIR``, and assumes a GCC-compatible C++11 compiler.
+
+Windows
++++++++
+
+Logdemux builds out of the box in MSYS/MinGW on Windows 7 or higher.
+
+.. _Boost: http://boost.org/
 
 License
 =======
