@@ -135,7 +135,7 @@ Git_ repository: http://github.com/roman-neuhauser/logdemux
 Binaries
 ++++++++
 
-Packages for some GNU/Linux distributions, are available
+Packages for some GNU/Linux distributions are available
 in the `Build Service`_.
 
 .. _Build Service:
