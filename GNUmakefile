@@ -67,6 +67,4 @@ check: all
 logdemux$(dot_exe): logdemux.o
 	$(LD) $(LDFLAGS) -o$@ $< $(LIBS)
 
-logdemux.o: logdemux.cpp
-
 .PHONY: all clean install
