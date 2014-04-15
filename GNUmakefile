@@ -34,13 +34,11 @@ define first_in_path
   ))
 endef
 
+ifeq (static, $(LINK_MODE))
+link_mode=-Wl,-Bstatic
+endif
 ifeq (MINGW,$(findstring MINGW,$(UNAME)))
 dot_exe=.exe
-link_mode=-Wl,-Bstatic
-else
-dot_exe=
-endif
-ifeq (static, $(LINK_MODE))
 link_mode=-Wl,-Bstatic
 endif
 
