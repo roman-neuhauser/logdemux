@@ -41,19 +41,23 @@ dot_exe =         .exe
 link_mode =       -Wl,-Bstatic
 endif
 
-all: logdemux$(dot_exe) logdemux.1.gz
+name =          logdemux
+
+artifacts =     $(name)$(dot_exe) $(name).1.gz
+
+all: $(artifacts)
 
 clean:
-	$(RM_F) logdemux.o logdemux$(dot_exe) logdemux.1.gz tests/*/*.actual tests/*/*.diff README.html
+	$(RM_F) $(artifacts) $(name).o tests/*/*.actual tests/*/*.diff README.html
 
 install: all
 	$(INSTALL_DIR) $(DESTDIR)$(BINDIR)
 	$(INSTALL_DIR) $(DESTDIR)$(MAN1DIR)
-	$(INSTALL_PROGRAM) logdemux$(dot_exe) $(DESTDIR)$(BINDIR)/logdemux$(dot_exe)
-	$(INSTALL_DATA) logdemux.1.gz $(DESTDIR)$(MAN1DIR)/logdemux.1.gz
+	$(INSTALL_PROGRAM) $(name)$(dot_exe) $(DESTDIR)$(BINDIR)/$(name)$(dot_exe)
+	$(INSTALL_DATA) $(name).1.gz $(DESTDIR)$(MAN1DIR)/$(name).1.gz
 
 check: all
-	SHELL=$(SHELL) $(SHELL) rnt/run-tests.sh tests "$$PWD/logdemux"
+	SHELL=$(SHELL) $(SHELL) rnt/run-tests.sh tests "$$PWD/$(name)"
 
 %.1.gz: %.1
 	$(GZIP) < $< > $@
@@ -61,7 +65,7 @@ check: all
 %.html: %.rest
 	$(RST2HTML) $< $@
 
-logdemux$(dot_exe): logdemux.o
+$(name)$(dot_exe): $(name).o
 	$(LD) $(LDFLAGS) -o$@ $< $(LIBS)
 
 .PHONY: all clean install
