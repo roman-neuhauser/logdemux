@@ -46,11 +46,12 @@ name =          logdemux
 artifacts =     $(name)$(dot_exe) $(name).1.gz
 
 all: $(artifacts)
+	@touch .built
 
 clean:
-	$(RM_F) $(artifacts) $(name).o tests/*/*.actual tests/*/*.diff README.html
+	$(RM_F) .built $(artifacts) $(name).o tests/*/*.actual tests/*/*.diff README.html
 
-install: all
+install: .built
 	$(INSTALL_DIR) $(DESTDIR)$(BINDIR)
 	$(INSTALL_DIR) $(DESTDIR)$(MAN1DIR)
 	$(INSTALL_PROGRAM) $(name)$(dot_exe) $(DESTDIR)$(BINDIR)/$(name)$(dot_exe)
@@ -67,5 +68,9 @@ check: all
 
 $(name)$(dot_exe): $(name).o
 	$(LD) $(LDFLAGS) -o$@ $< $(LIBS)
+
+.built:
+	@printf "%s\n" '' "ERROR: run '$(MAKE) all' first." '' >&2
+	@false
 
 .PHONY: all clean install
