@@ -180,7 +180,7 @@ complain(int exitcode, Fmt msg) // {{{
 } // }}}
 
 string
-basename(string const &path) // {{{
+tailname(string const &path) // {{{
 {
   return regex_replace(
     path
@@ -194,7 +194,7 @@ basename(string const &path) // {{{
 int
 main(int argc, char **argv)
 {
-  string self = argc ? basename(argv[0]) : "logdemux";
+  string self = argc ? tailname(argv[0]) : "logdemux";
 
   if (argc < 3)
     return complain(
