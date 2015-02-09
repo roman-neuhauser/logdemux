@@ -18,7 +18,6 @@
 #define EX_NOINPUT      66      /* cannot open input */
 #define EX_SOFTWARE     70      /* internal software error */
 
-#include "boost/ref.hpp"
 #include "boost/foreach.hpp"
 #include "boost/format.hpp"
 #include "boost/date_time/gregorian/gregorian.hpp"
@@ -45,7 +44,6 @@ using std::ofstream;
 using std::string;
 using std::vector;
 
-using boost::cref;
 using boost::format;
 using namespace boost::gregorian;
 using boost::regex;
@@ -130,7 +128,7 @@ private:
     return regex_replace(
       fmt
     , regex("%[DP]\\>")
-    , cref(expand_sink(prefix, d))
+    , expand_sink(prefix, d)
     );
   } // }}}
 }; // }}}
